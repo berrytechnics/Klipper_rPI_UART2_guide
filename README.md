@@ -43,7 +43,26 @@
      - TFT RX → Pi GPIO 14 (physical pin 8)
      - GND → Any Pi GND pin
 
-5. **Update printer.cfg**
+5. **Recompile and Flash Klipper Firmware**
+   ```bash
+   cd ~/klipper
+   make menuconfig
+   ```
+   Configure the following settings:
+   - Micro-controller: STM32F103
+   - Processor model: STM32F103
+   - Bootloader offset: 28KiB
+   - Communication interface: Serial (UART PA2/PA3)
+   - Baud rate: 250000
+
+   Then compile and flash:
+   ```bash
+   make clean
+   make
+   ```
+   Copy the compiled firmware to an SD card and flash the board.
+
+6. **Update printer.cfg**
    ```bash
    nano ~/printer_data/config/printer.cfg
    ```
@@ -54,7 +73,7 @@
    restart_method: command
    ```
 
-6. **Reboot and Start Services**
+7. **Reboot and Start Services**
    ```bash
    sudo reboot
    ```
@@ -100,7 +119,27 @@
      - TFT RX → Pi GPIO 14 (physical pin 8)
      - GND → Any Pi GND pin
 
-5. **Configure Klipper**
+5. **Configure and Compile Klipper**
+   ```bash
+   cd ~/klipper
+   make menuconfig
+   ```
+   Settings:
+   - Micro-controller: STM32F103
+   - Processor model: STM32F103
+   - Bootloader offset: 28KiB
+   - Communication interface: Serial (UART PA2/PA3)
+   - Baud rate: 250000
+   
+   Then compile:
+   ```bash
+   make clean
+   make
+   ```
+   - Copy the resulting `klipper.bin` to SD card, rename to `firmware.bin`
+   - Insert SD into SKR board and power on to flash
+
+6. **Configure printer.cfg**
    - Create printer.cfg:
    ```bash
    nano ~/printer_data/config/printer.cfg
@@ -118,23 +157,6 @@
    max_z_velocity: 5
    max_z_accel: 100
    ```
-
-6. **Flash Klipper to SKR Mini E3 V2**
-   ```bash
-   cd ~/klipper
-   make menuconfig
-   ```
-   Settings:
-   - Micro-controller: STM32F103
-   - Boot Flash: 28KiB
-   - Communication interface: Serial (UART)
-   
-   Then:
-   ```bash
-   make
-   ```
-   - Copy firmware to SD card
-   - Insert SD into SKR board and power on
 
 7. **Start Services**
    ```bash
@@ -159,7 +181,8 @@
 ### Communication Errors
 1. Verify TX/RX aren't swapped
 2. Check ground connection
-3. Verify baud rate matches in printer.cfg
+3. Ensure menuconfig was set to UART PA2/PA3
+4. Verify baud rate matches in printer.cfg (250000)
 
 ### Bluetooth Issues
 If you need Bluetooth, use alternate UART:
